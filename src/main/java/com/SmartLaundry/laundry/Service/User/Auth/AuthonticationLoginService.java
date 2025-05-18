@@ -35,8 +35,13 @@ public class AuthonticationLoginService {
 
     public String registerUser(User user){
         try {
-            userRepository.save(user);
-            return "User added successfully";
+            Optional<User> user1 = userRepository.findByEmail(user.getEmail());
+            if (!user1.isPresent()) {
+                userRepository.save(user);
+                return "User added successfully";
+            } else {
+                return "User already exist";
+            }
         } catch (Exception e){
             return "Error when register user" + e.getMessage().toString();
         }
