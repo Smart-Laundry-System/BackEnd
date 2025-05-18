@@ -3,6 +3,7 @@ package com.SmartLaundry.laundry.Service.User.Auth;
 import com.SmartLaundry.laundry.Dto.User.EmailSender;
 import com.SmartLaundry.laundry.Dto.User.LoginRequest;
 import com.SmartLaundry.laundry.Dto.User.UserUpdate;
+import com.SmartLaundry.laundry.Entity.Roles.UserRole;
 import com.SmartLaundry.laundry.Entity.User.User;
 import com.SmartLaundry.laundry.Repository.User.UserRepository;
 import com.SmartLaundry.laundry.Service.Emile.EmailService;
@@ -13,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -35,12 +37,19 @@ public class AuthonticationLoginService {
 
     public String registerUser(User user){
         try {
-            Optional<User> user1 = userRepository.findByEmail(user.getEmail());
-            if (!user1.isPresent()) {
-                userRepository.save(user);
-                return "User added successfully";
+            if (user.getRole().equals(UserRole.LAUNDRY) || user.getRole().equals(UserRole.CUSTOMER)){
+                Optional<User> user1 = userRepository.findByEmail(user.getEmail());
+                if (!user1.isPresent()) {
+                    userRepository.save(user);
+                    return "User added successfully";
+                } else if (!Objects.equals(user1.get().getRole(), user.getRole())) {
+                    userRepository.save(user);
+                    return "User added successfully";
+                } else {
+                    return "User already exist";
+                }
             } else {
-                return "User already exist";
+                return "Invalid role: only LAUNDRY or CUSTOMER allowed";
             }
         } catch (Exception e){
             return "Error when register user" + e.getMessage().toString();

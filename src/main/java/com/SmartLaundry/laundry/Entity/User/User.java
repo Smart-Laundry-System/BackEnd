@@ -1,6 +1,7 @@
 package com.SmartLaundry.laundry.Entity.User;
 
 import com.SmartLaundry.laundry.Entity.Complain.Complain;
+import com.SmartLaundry.laundry.Entity.Roles.UserRole;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,8 +27,8 @@ public class User{
     @Column(name = "user_id")
     private Long id;
 
-//    @Column(unique = true, nullable = false)
-//    private String email;
+    @Column(unique = true, nullable = false)
+    private String email;
 
     @Column(nullable = false)
     private String name;
@@ -35,11 +36,15 @@ public class User{
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String role;//can add as customer and laundry
+    private UserRole role;
 
     @Column(nullable = false)
     private String phone;
+
+    @Column(nullable = true)
+    private String phone_2;
 
     @Column(nullable = false)
     private String address;
@@ -48,14 +53,31 @@ public class User{
     public String toString() {
         return "User{" +
                 "id=" + id +
-//                ", email='" + email + '\'' +
+                ", email='" + email + '\'' +
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
-                ", role='" + role + '\'' +
+                ", role=" + role +
                 ", phone='" + phone + '\'' +
+                ", phone_2='" + phone_2 + '\'' +
                 ", address='" + address + '\'' +
                 ", complain=" + complain +
                 '}';
+    }
+
+    public String getPhone_2() {
+        return phone_2;
+    }
+
+    public void setPhone_2(String phone_2) {
+        this.phone_2 = phone_2;
+    }
+
+    public UserRole getRole() {
+        return role;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 
     public String getPhone() {
@@ -90,13 +112,13 @@ public class User{
         this.id = id;
     }
 
-//    public String getEmail() {
-//        return email;
-//    }
-//
-//    public void setEmail(String email) {
-//        this.email = email;
-//    }
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
     public String getPassword() {
         return password;
@@ -104,14 +126,6 @@ public class User{
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
     }
 
     @OneToMany
