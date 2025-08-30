@@ -42,6 +42,7 @@ package com.SmartLaundry.laundry.Service.Laundry;
 import com.SmartLaundry.laundry.Dto.Laundry.LaundryCreateRequest;
 import com.SmartLaundry.laundry.Entity.Laundry.Laundry;
 import com.SmartLaundry.laundry.Entity.Laundry.Services;
+import com.SmartLaundry.laundry.Entity.Roles.UserRole;
 import com.SmartLaundry.laundry.Entity.User.User;
 import com.SmartLaundry.laundry.Entity.UserLaundry.UserLaundry;
 import com.SmartLaundry.laundry.Entity.UserLaundry.UserLaundryRole;
@@ -49,6 +50,8 @@ import com.SmartLaundry.laundry.Repository.Laundry.LaundryRepository;
 import com.SmartLaundry.laundry.Repository.User.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 public class LaundryService {
@@ -64,6 +67,8 @@ public class LaundryService {
     @Transactional
     public String registerLaundry(LaundryCreateRequest req) {
         try {
+            Optional<User> user = userRepository.findByEmail(req.getEmail());
+            if (user.isPresent() && req.getRole()== UserRole.LAUNDRY) return "User already exist";
             // 1) Create or update the User (role LAUNDRY)
             User owner = userRepository.findByEmail(req.getEmail()).orElseGet(User::new);
             owner.setEmail(req.getEmail());
@@ -89,11 +94,11 @@ public class LaundryService {
             l.setOwner(owner);
 
             // 3) Link OWNER via association (cascade from Laundry will save this)
-            UserLaundry link = new UserLaundry();
-            link.setUser(owner);
-            link.setLaundry(l);
-            link.setRelationRole(UserLaundryRole.OWNER);
-            l.getUserLaundries().add(link);
+//            UserLaundry link = new UserLaundry();
+//            link.setUser(owner);
+//            link.setLaundry(l);
+//            link.setRelationRole(UserLaundryRole.OWNER);
+//            l.getUserLaundries().add(link);
             laundryRepository.save(l);
 
             return "User added successfully";

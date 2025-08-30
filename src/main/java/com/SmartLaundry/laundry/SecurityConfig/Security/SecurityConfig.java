@@ -158,7 +158,8 @@ public class SecurityConfig {
                                 "/auth/v1/addLaundry",
                                 "/auth/v1/login",
                                 "/auth/v1/resetPassword",
-                                "/auth/v1/forgotPassword"
+                                "/auth/v1/forgotPassword",
+                                "/auth/v1/addLaundryUser"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

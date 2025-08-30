@@ -74,6 +74,7 @@ import com.SmartLaundry.laundry.Dto.Laundry.LaundryCreateRequest;
 import com.SmartLaundry.laundry.Dto.User.EmailSender;
 import com.SmartLaundry.laundry.Dto.User.LoginRequest;
 import com.SmartLaundry.laundry.Dto.User.UserUpdate;
+import com.SmartLaundry.laundry.Entity.Roles.UserRole;
 import com.SmartLaundry.laundry.Service.Emile.EmailService;
 import com.SmartLaundry.laundry.Service.Laundry.LaundryService;
 import com.SmartLaundry.laundry.Service.User.Auth.AuthonticationLoginService;
@@ -101,9 +102,22 @@ public class AuthonticationLogin {
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
 
     @PostMapping("/addUser")
-    public ResponseEntity<?> userRegister(@RequestBody User user){
+    public ResponseEntity<?> appRegister(@RequestBody User user){
+        if (user.getRole() == null) {
+            user.setRole(UserRole.CUSTOMER);
+        }
         user.setPassword(encoder.encode(user.getPassword()));
-        String message = userService.registerUser(user);
+        String message = userService.appRegister(user);
+        return ResponseEntity.ok().body(message);
+    }
+
+    @PostMapping("/addLaundryUser")
+    public ResponseEntity<?> userRegister(@RequestBody User user, @RequestParam String laundryEmail){
+        if (user.getRole() == null) {
+            user.setRole(UserRole.CUSTOMER);
+        }
+        user.setPassword(encoder.encode(user.getPassword()));
+        String message = userService.registerUser(user,laundryEmail);
         return ResponseEntity.ok().body(message);
     }
 
@@ -132,7 +146,7 @@ public class AuthonticationLogin {
     @PostMapping("/addLaundry")
     public ResponseEntity<?> addLaundry(@RequestBody LaundryCreateRequest request){
         if (request.getRole() == null) {
-            request.setRole(com.SmartLaundry.laundry.Entity.Roles.UserRole.LAUNDRY);
+            request.setRole(UserRole.LAUNDRY);
         }
         if (request.getPassword() != null) {
             request.setPassword(encoder.encode(request.getPassword()));

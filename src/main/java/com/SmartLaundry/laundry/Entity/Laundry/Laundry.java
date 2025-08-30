@@ -220,19 +220,18 @@ package com.SmartLaundry.laundry.Entity.Laundry;
 //        this.about = about;
 //    }
 //}
-
 import com.SmartLaundry.laundry.Entity.User.User;
 import com.SmartLaundry.laundry.Entity.UserLaundry.UserLaundry;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "laundry")
-@AllArgsConstructor
-@NoArgsConstructor
 public class Laundry {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "laundry_id")
@@ -260,10 +259,19 @@ public class Laundry {
     @JoinColumn(name = "owner_id", referencedColumnName = "user_id")
     private User owner;
 
+//    @OneToMany(mappedBy = "laundry", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private Set<UserLaundry> userLaundries = new LinkedHashSet<>();
     @OneToMany(mappedBy = "laundry", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserLaundry> userLaundries = new java.util.ArrayList<>();
 
-    // getters/setters ...
+    public List<UserLaundry> getUserLaundries() {
+        return userLaundries;
+    }
+
+    public void setUserLaundries(List<UserLaundry> userLaundries) {
+        this.userLaundries = userLaundries;
+    }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
@@ -284,6 +292,21 @@ public class Laundry {
     public void setAbout(String about) { this.about = about; }
     public User getOwner() { return owner; }
     public void setOwner(User owner) { this.owner = owner; }
-    public List<UserLaundry> getUserLaundries() { return userLaundries; }
-    public void setUserLaundries(List<UserLaundry> userLaundries) { this.userLaundries = userLaundries; }
+
+    @Override
+    public String toString() {
+        return "Laundry{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", phone='" + phone + '\'' +
+                ", address='" + address + '\'' +
+                ", services=" + services +
+                ", availableItems=" + availableItems +
+                ", otherItems='" + otherItems + '\'' +
+                ", laundryImg='" + laundryImg + '\'' +
+                ", about='" + about + '\'' +
+                ", owner=" + owner +
+                ", userLaundries=" + userLaundries +
+                '}';
+    }
 }

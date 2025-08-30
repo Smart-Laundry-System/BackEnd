@@ -32,8 +32,13 @@ package com.SmartLaundry.laundry.Controller.User;
 //}
 
 import com.SmartLaundry.laundry.Dto.Laundry.LaundryDetailsDto;
+import com.SmartLaundry.laundry.Entity.Dto.LaundryDTO;
+import com.SmartLaundry.laundry.Entity.Dto.UserDTO;
+import com.SmartLaundry.laundry.Entity.Laundry.UpdateCustomer;
 import com.SmartLaundry.laundry.Entity.User.User;
+import com.SmartLaundry.laundry.Service.CustomerLinkService;
 import com.SmartLaundry.laundry.Service.User.Impl.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,22 +47,46 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
+    private final CustomerLinkService service;
     private final UserService userService;
 
-    public AuthController(UserService userService) {
+    public AuthController(UserService userService, CustomerLinkService service) {
         this.userService = userService;
+        this.service = service;
     }
 
     @GetMapping("/retriveUser")
-    public ResponseEntity<?> retriveUser(){
-        List<User> users = userService.retriveUsers();
+    public ResponseEntity<?> retriveUser(@RequestParam String laundryEmail){
+        List<UserDTO> user = service.retriveUser(laundryEmail);
+        return ResponseEntity.ok().body(user);
+    }
+
+    @GetMapping("/retriveUsers")
+    public ResponseEntity<?> retriveUsers(){
+        List<UserDTO> users = service.retriveAllUsers();
         return ResponseEntity.ok().body(users);
+    }
+//    public ResponseEntity<UserDTO> retriveUser(@RequestParam("email") String email) {
+//        return ResponseEntity.ok(service.getUserAsDTOByEmail(email));
+//    }
+
+    @GetMapping("/retriveLaundries")
+//    public ResponseEntity<?> retriveLaundries(){
+//        List<User> users = userService.retriveLaundries();
+//        return ResponseEntity.ok().body(users);
+//    }
+    public ResponseEntity<List<LaundryDTO>> retriveLaundries() {
+        return ResponseEntity.ok(service.getAllLaundriesAsDTO());
     }
 
     @PutMapping("/updateCustomer")
-    public ResponseEntity<?> addCustomer(@RequestParam String customerEmail, @RequestParam String laundryEmail){
-        String message = userService.addCustomer(customerEmail, laundryEmail);
-        return ResponseEntity.ok().body(message);
+//    public ResponseEntity<?> addCustomer(@RequestBody UpdateCustomer customer){
+//        String message = userService.addCustomer(customer.getCustomerEmail(), customer.getLaundryEmail());
+//        return ResponseEntity.ok().body(message);
+//    }
+    public ResponseEntity<String> updateCustomer(@RequestBody UpdateCustomer body) {
+        String msg = service.addCustomer(body.getCustomerEmail(), body.getLaundryEmail());
+        return ResponseEntity.ok(msg);
     }
     /**
      * For your React Native screen:

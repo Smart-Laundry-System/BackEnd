@@ -64,7 +64,9 @@ package com.SmartLaundry.laundry.Service.User.Impl;
 ////    }
 //}
 import com.SmartLaundry.laundry.Dto.Laundry.LaundryDetailsDto;
+import com.SmartLaundry.laundry.Entity.Dto.UserDTO;
 import com.SmartLaundry.laundry.Entity.Laundry.Laundry;
+import com.SmartLaundry.laundry.Entity.Roles.UserRole;
 import com.SmartLaundry.laundry.Entity.User.User;
 import com.SmartLaundry.laundry.Entity.User.UserPrinciple;
 import com.SmartLaundry.laundry.Entity.UserLaundry.UserLaundry;
@@ -102,10 +104,6 @@ public class UserService implements UserDetailsService {
         User u = userRepository.findByEmail(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
         return new UserPrinciple(u);
-    }
-
-    public List<User> retriveUsers() {
-        return userRepository.findAll();
     }
 
     // used by GET /api/auth/details?email=...
@@ -157,12 +155,12 @@ public class UserService implements UserDetailsService {
             Laundry laundry1 = laundry.get();
             Optional<UserLaundry> userLaundry = userLaundryRepository.findByUser_IdAndLaundry_Id(user1.getId(), laundry1.getId());
             if ((userLaundry.isPresent())){
-                UserLaundry link = userLaundry.get();
-                if (link.getRelationRole() == UserLaundryRole.CUSTOMER) {
+//                UserLaundry link = userLaundry.get();
+//                if (link.getRelationRole() == UserLaundryRole.CUSTOMER) {
                     return "Customer already linked to this laundry.";
-                }
-                link.setRelationRole(UserLaundryRole.CUSTOMER);
-                userLaundryRepository.save(link);
+//                }
+//                link.setRelationRole(UserLaundryRole.CUSTOMER);
+//                userLaundryRepository.save(link);
             } else {
                 // Create new link
                 UserLaundry link = new UserLaundry();
