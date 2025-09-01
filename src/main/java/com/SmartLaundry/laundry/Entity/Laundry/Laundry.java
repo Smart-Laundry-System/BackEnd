@@ -222,8 +222,10 @@ package com.SmartLaundry.laundry.Entity.Laundry;
 //}
 import com.SmartLaundry.laundry.Entity.User.User;
 import com.SmartLaundry.laundry.Entity.UserLaundry.UserLaundry;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -241,10 +243,8 @@ public class Laundry {
     @Column(nullable = false) private String phone;
     @Column(nullable = false) private String address;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "laundry_services", joinColumns = @JoinColumn(name = "laundry_id"))
-    @Column(nullable = false)
-    private List<Services> services;
+    @OneToMany(mappedBy = "laundry", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Services> services = new ArrayList<>();
 
     @ElementCollection
     @CollectionTable(name = "laundry_available_items", joinColumns = @JoinColumn(name = "laundry_id"))
@@ -255,6 +255,7 @@ public class Laundry {
     @Column(nullable = false) private String laundryImg;
     @Column(nullable = false) private String about;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "owner_id", referencedColumnName = "user_id")
     private User owner;
@@ -263,6 +264,20 @@ public class Laundry {
 //    private Set<UserLaundry> userLaundries = new LinkedHashSet<>();
     @OneToMany(mappedBy = "laundry", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserLaundry> userLaundries = new java.util.ArrayList<>();
+
+    public void addService(Services s) {
+        if (s == null) return;
+        s.setId(null);           // ensure INSERT, not update
+        s.setLaundry(this);      // ✅ critical: sets FK side, so laundry_id is NOT null
+        this.services.add(s);
+    }
+
+    public void clearAndAddServices(List<Services> list) {
+        this.services.clear();
+        if (list != null) {
+            for (Services s : list) addService(s);
+        }
+    }
 
     public List<UserLaundry> getUserLaundries() {
         return userLaundries;

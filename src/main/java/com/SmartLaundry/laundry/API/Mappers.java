@@ -1,10 +1,11 @@
 package com.SmartLaundry.laundry.API;
 
-import com.SmartLaundry.laundry.Entity.Dto.CustomerLite;
-import com.SmartLaundry.laundry.Entity.Dto.LaundryDTO;
-import com.SmartLaundry.laundry.Entity.Dto.LaundryLite;
-import com.SmartLaundry.laundry.Entity.Dto.UserDTO;
+import com.SmartLaundry.laundry.Dto.Order.OrderDto;
+import com.SmartLaundry.laundry.Entity.Dto.*;
 import com.SmartLaundry.laundry.Entity.Laundry.Laundry;
+import com.SmartLaundry.laundry.Entity.Laundry.Services;
+import com.SmartLaundry.laundry.Entity.Notification.Notifications;
+import com.SmartLaundry.laundry.Entity.Order.CustomerOrder;
 import com.SmartLaundry.laundry.Entity.User.User;
 import com.SmartLaundry.laundry.Entity.UserLaundry.UserLaundry;
 import com.SmartLaundry.laundry.Entity.UserLaundry.UserLaundryRole;
@@ -38,6 +39,11 @@ public class Mappers {
         );
     }
 
+    // NEW: Service -> ServiceLite
+    public ServiceLite toServiceLite(Services s) {
+        return new ServiceLite(s.getId(), s.getTitle(), s.getCategory(), s.getPrice());
+    }
+
     public LaundryDTO toLaundryDTO(Laundry l) {
         List<CustomerLite> customers = l.getUserLaundries().stream()
                 .filter(ul -> ul.getRelationRole() == UserLaundryRole.CUSTOMER)
@@ -46,8 +52,60 @@ public class Mappers {
                 .distinct()
                 .toList();
 
+        // map entities to ServiceLite (no back reference)
+        List<ServiceLite> services = l.getServices().stream()
+                .map(this::toServiceLite)
+                .toList();
+
         return new LaundryDTO(
-                l.getId(), l.getName(), l.getPhone(), l.getAddress(), customers
+                l.getId(), l.getName(), l.getPhone(), l.getAddress(),
+                services, l.getAvailableItems(), l.getOtherItems(), l.getLaundryImg(),
+                customers
         );
+    }
+
+    public OrderDto toOrderDTO(CustomerOrder order) {
+        String customerName = null;
+        String customerPhone = null;
+
+        if (order.getUsers() != null) {
+            customerName = order.getUsers().getName();
+            customerPhone = order.getUsers().getPhone();
+        }
+
+        return new OrderDto(
+                order.getId(),
+                order.getServiceIds(),
+                order.getCustomerEmail(),
+                order.getLaundryEmail(),
+                order.getLaundryName(),
+                order.getCustomerAddress(),
+                order.getLaundryAddress(),
+                order.getTotPrice(),
+                order.getLaundryImg(),
+                order.getStatus(),
+                customerName,
+                customerPhone
+        );
+    }
+
+    public NotificationDTO toNotificationDTO(Notifications n) {
+        return new NotificationDTO(
+                n.getId(),
+                n.getLaundryName(),
+                n.getLaundryEmail(),
+                n.getCustomerEmail(),
+                n.getSubject(),
+                n.getMessage(),
+                n.getLaundryImg(),
+                n.getStatus() != null ? n.getStatus().name() : null,
+                n.getDate() != null ? n.getDate().toString() : null,
+                n.getTime() != null ? n.getTime().toString() : null
+        );
+    }
+
+    // If you ever need a compact user inside a notification detail:
+    public UserMini toUserMini(User u) {
+        return u == null ? null : new UserMini(u.getId(), u.getEmail(), u.getName());
     }
 }

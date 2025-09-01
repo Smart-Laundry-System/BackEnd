@@ -2,6 +2,7 @@ package com.SmartLaundry.laundry.Entity.Complain;
 
 
 import com.SmartLaundry.laundry.Entity.User.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -47,6 +48,7 @@ public class Complain {
                 '}';
     }
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

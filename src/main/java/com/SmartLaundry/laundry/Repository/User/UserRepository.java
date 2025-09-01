@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,23 +24,24 @@ Optional<User> findByEmail(String email);
     List<User> findByRole(UserRole role);
 
     // if/when you need the link side eagerly:
+
     @Query("""
-           select distinct u
-           from User u
-           join u.userLaundries ul
-           join ul.laundry l
-           where l.owner.email = :laundryEmail
-           """)
-    List<User> findAllByLaundryOwnerEmail(@Param("laundryEmail") String laundryEmail);
+  select distinct u
+  from User u
+  join u.userLaundries ul
+  join ul.laundry l
+  where lower(l.owner.email) = lower(:laundryEmail)
+    and ul.relationRole = :role
+""")
+    List<User> findAllByLaundryEmailOrOwnerEmailAndRole(
+            @Param("laundryEmail") String laundryEmail,
+            @Param("role") UserLaundryRole role);
 
     @Query("""
            select distinct u
            from User u
-           join u.userLaundries ul
-           join ul.laundry l
-           where l.owner.email = :laundryEmail
-             and ul.relationRole = :role
+           join u.orders o
+           where lower(o.laundryEmail) = lower(:laundryEmail)
            """)
-    List<User> findAllByLaundryOwnerEmailAndRole(@Param("laundryEmail") String laundryEmail,
-                                                 @Param("role") UserLaundryRole role);
+    List<User> findAllCustomersByOrderLaundryEmail(@Param("laundryEmail") String laundryEmail);
 }

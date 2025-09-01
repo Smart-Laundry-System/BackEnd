@@ -139,6 +139,8 @@
 package com.SmartLaundry.laundry.Entity.User;
 
 import com.SmartLaundry.laundry.Entity.Complain.Complain;
+import com.SmartLaundry.laundry.Entity.Notification.Notifications;
+import com.SmartLaundry.laundry.Entity.Order.CustomerOrder;
 import com.SmartLaundry.laundry.Entity.Roles.UserRole;
 import com.SmartLaundry.laundry.Entity.UserLaundry.UserLaundry;
 import jakarta.persistence.*;
@@ -187,8 +189,50 @@ public class User {
     private List<UserLaundry> userLaundries = new java.util.ArrayList<>();
 
     @OneToMany
+    @JoinColumn(name = "ord_id")
+    private List<CustomerOrder> orders = new ArrayList<>();
+
+    @OneToMany
     @JoinColumn(name = "com_id")
     private List<Complain> complain = new ArrayList<>();
+
+    @OneToMany
+    @JoinColumn(name = "not_id")
+    private List<Notifications> notifications = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", phone='" + phone + '\'' +
+                ", phone_2='" + phone_2 + '\'' +
+                ", address='" + address + '\'' +
+                ", userLaundries=" + userLaundries +
+                ", orders=" + orders +
+                ", complain=" + complain +
+                ", notifications=" + notifications +
+                '}';
+    }
+
+    public List<CustomerOrder> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(List<CustomerOrder> orders) {
+        this.orders = orders;
+    }
+
+    public List<Notifications> getNotifications() {
+        return notifications;
+    }
+
+    public void setNotifications(List<Notifications> notifications) {
+        this.notifications = notifications;
+    }
 
     // --- getters & setters ---
     public Long getId() { return id; }
@@ -226,19 +270,4 @@ public class User {
     public List<Complain> getComplain() { return complain; }
     public void setComplain(List<Complain> complain) { this.complain = complain; }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", role=" + role +
-                ", phone='" + phone + '\'' +
-                ", phone_2='" + phone_2 + '\'' +
-                ", address='" + address + '\'' +
-                ", userLaundries=" + userLaundries +
-                ", complain=" + complain +
-                '}';
-    }
 }

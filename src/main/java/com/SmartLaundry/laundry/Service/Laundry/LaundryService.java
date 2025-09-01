@@ -40,6 +40,7 @@ package com.SmartLaundry.laundry.Service.Laundry;
 //    }
 //}
 import com.SmartLaundry.laundry.Dto.Laundry.LaundryCreateRequest;
+import com.SmartLaundry.laundry.Entity.Dto.ServiceCreateDto;
 import com.SmartLaundry.laundry.Entity.Laundry.Laundry;
 import com.SmartLaundry.laundry.Entity.Laundry.Services;
 import com.SmartLaundry.laundry.Entity.Roles.UserRole;
@@ -67,38 +68,45 @@ public class LaundryService {
     @Transactional
     public String registerLaundry(LaundryCreateRequest req) {
         try {
-            Optional<User> user = userRepository.findByEmail(req.getEmail());
-            if (user.isPresent() && req.getRole()== UserRole.LAUNDRY) return "User already exist";
-            // 1) Create or update the User (role LAUNDRY)
-            User owner = userRepository.findByEmail(req.getEmail()).orElseGet(User::new);
+            Optional<User> existingOwner = userRepository.findByEmail(req.getEmail());
+            if (existingOwner.isPresent() && req.getRole() == UserRole.LAUNDRY) {
+                return "User already exist";
+            }
+
+            User owner = existingOwner.orElseGet(User::new);
             owner.setEmail(req.getEmail());
-            owner.setName(req.getName());          // reuse single 'name'
-            owner.setPassword(req.getPassword());  // already encoded in controller
-            owner.setRole(req.getRole());          // should be LAUNDRY
+            owner.setName(req.getName());
+            owner.setPassword(req.getPassword()); // already encoded in controller
+            owner.setRole(req.getRole());         // LAUNDRY
             owner.setPhone(req.getPhone());
             owner.setPhone_2(req.getPhone2());
             owner.setAddress(req.getAddress());
             owner = userRepository.save(owner);
 
-            // 2) Create Laundry
+            // 2) Build Laundry
             Laundry l = new Laundry();
-            l.setName(req.getName());              // laundry display name
-            l.setPhone(req.getPhone());            // use same phone/address unless you separate later
+            l.setName(req.getName());
+            l.setPhone(req.getPhone());
             l.setAddress(req.getAddress());
             l.setLaundryImg(req.getLaundryImg());
             l.setAbout(req.getAbout());
-
-            l.setServices(req.getServices());
             l.setAvailableItems(req.getAvailableItems());
             l.setOtherItems(req.getOtherItems());
             l.setOwner(owner);
 
-            // 3) Link OWNER via association (cascade from Laundry will save this)
-//            UserLaundry link = new UserLaundry();
-//            link.setUser(owner);
-//            link.setLaundry(l);
-//            link.setRelationRole(UserLaundryRole.OWNER);
-//            l.getUserLaundries().add(link);
+            // 3) Map DTO services to entity and link the parent
+            if (req.getServices() != null) {
+                for (Services sd : req.getServices()) {
+                    Services s = new Services();
+                    s.setId(null);
+                    s.setTitle(sd.getTitle());
+                    s.setCategory(sd.getCategory());
+                    s.setPrice(sd.getPrice());
+                    l.addService(s); // ✅ sets s.laundry = l and adds to list
+                }
+            }
+
+            // 4) Persist once; Cascade inserts Services with non-null laundry_id
             laundryRepository.save(l);
 
             return "User added successfully";

@@ -2,6 +2,7 @@ package com.SmartLaundry.laundry.Service;
 
 import com.SmartLaundry.laundry.API.Mappers;
 import com.SmartLaundry.laundry.Entity.Dto.LaundryDTO;
+import com.SmartLaundry.laundry.Entity.Dto.LaundryLite;
 import com.SmartLaundry.laundry.Entity.Dto.UserDTO;
 import com.SmartLaundry.laundry.Entity.Laundry.Laundry;
 import com.SmartLaundry.laundry.Entity.Roles.UserRole;
@@ -11,12 +12,14 @@ import com.SmartLaundry.laundry.Entity.UserLaundry.UserLaundryRole;
 import com.SmartLaundry.laundry.Repository.Laundry.LaundryRepository;
 import com.SmartLaundry.laundry.Repository.Laundry.UserLaundryRepository;
 import com.SmartLaundry.laundry.Repository.User.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerLinkService {
@@ -99,10 +102,36 @@ public class CustomerLinkService {
                 .toList();
     }
 
-    public List<UserDTO> retriveUser(String laundryEmail) {
-        return userRepository.findAllByLaundryOwnerEmailAndRole(laundryEmail,UserLaundryRole.CUSTOMER)
+    public UserDTO retriveUser(String laundryEmail) {
+        User user = userRepository.findByEmail(laundryEmail)
+                .orElseThrow(() -> new EntityNotFoundException("User not found for email: " + laundryEmail));
+
+        // Map List<UserLaundry> -> List<LaundryLite>
+        List<LaundryLite> laundries = Optional.ofNullable(user.getUserLaundries())
+                .orElse(List.of())
                 .stream()
-                .map(mappers::toUserDTO)
+                .map(ul -> toLaundryLite(ul))   // or inline lambda as below
                 .toList();
+
+        return new UserDTO(
+                user.getId(),
+                user.getEmail(),
+                user.getName(),
+                // if Role is an enum, use .name(); if it's already String, use getRole()
+                user.getRole() == null ? null : user.getRole().toString(),
+                user.getPhone(),
+                user.getAddress(),
+                laundries
+        );
+    }
+
+    private static LaundryLite toLaundryLite(UserLaundry ul) {
+        Laundry l = ul.getLaundry();
+        return new LaundryLite(
+                l.getId(),
+                l.getName(),
+                l.getAddress(),
+                l.getLaundryImg()
+        );
     }
 }

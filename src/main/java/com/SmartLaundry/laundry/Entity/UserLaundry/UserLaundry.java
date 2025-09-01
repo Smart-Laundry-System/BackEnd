@@ -33,6 +33,7 @@ package com.SmartLaundry.laundry.Entity.UserLaundry;
 //}
 import com.SmartLaundry.laundry.Entity.Laundry.Laundry;
 import com.SmartLaundry.laundry.Entity.User.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.time.Instant;
@@ -49,10 +50,12 @@ public class UserLaundry {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @JsonIgnore
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "laundry_id")
     private Laundry laundry;

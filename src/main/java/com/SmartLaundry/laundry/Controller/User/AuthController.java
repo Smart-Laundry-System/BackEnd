@@ -43,6 +43,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -57,7 +58,7 @@ public class AuthController {
 
     @GetMapping("/retriveUser")
     public ResponseEntity<?> retriveUser(@RequestParam String laundryEmail){
-        List<UserDTO> user = service.retriveUser(laundryEmail);
+        UserDTO user = service.retriveUser(laundryEmail);
         return ResponseEntity.ok().body(user);
     }
 
