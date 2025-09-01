@@ -8,4 +8,6 @@ import java.util.List;
 public interface ServicesRepository extends JpaRepository<Services, Long> {
     // Only services that belong to the same Laundry (by id)
     List<Services> findAllByIdInAndLaundry_Id(List<Long> ids, Long laundryId);
+
+    List<Services> findAllByLaundry_Id(Long laundryId);
 }
