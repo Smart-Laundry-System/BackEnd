@@ -1,4 +1,4 @@
-package com.SmartLaundry.laundry.Entity.Dto;
+package com.SmartLaundry.laundry.Entity.Dto.NotificationsCom;
 public class NotificationDTO {
     private Long id;
     private String laundryName;

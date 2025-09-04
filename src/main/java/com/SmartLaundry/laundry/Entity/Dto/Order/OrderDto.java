@@ -1,6 +1,8 @@
-package com.SmartLaundry.laundry.Dto.Order;
+package com.SmartLaundry.laundry.Entity.Dto.Order;
 
 import com.SmartLaundry.laundry.Entity.Order.OrderStatus;
+
+import java.util.Date;
 import java.util.List;
 
 public record OrderDto(
@@ -13,6 +15,7 @@ public record OrderDto(
         String laundryAddress,
         double totPrice,
         String laundryImg,
+        Date estimatedDate,
         OrderStatus status,
         String customerName,
         String customerPhone

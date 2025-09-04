@@ -1,4 +1,4 @@
-package com.SmartLaundry.laundry.Dto.User;
+package com.SmartLaundry.laundry.Entity.Dto.User;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -11,6 +11,13 @@ public class EmailSender {
     @Email
     @NotNull
     private String email;
+
+    @Override
+    public String toString() {
+        return "EmailSender{" +
+                "email='" + email + '\'' +
+                '}';
+    }
 
     public String getEmail() {
         return email;

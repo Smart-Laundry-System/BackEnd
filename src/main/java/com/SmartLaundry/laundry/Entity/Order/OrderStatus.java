@@ -1,5 +1,5 @@
 package com.SmartLaundry.laundry.Entity.Order;
 
 public enum OrderStatus {
-    PICKUP, PROCESSING, READY, DELIVERED, CANCELLED
+    UNCONFIRMED,PICKUP, WASHING, ON_THE_WAY, REACHED, CANCELLED
 }

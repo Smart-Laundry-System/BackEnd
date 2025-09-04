@@ -1,4 +1,4 @@
-package com.SmartLaundry.laundry.Entity.Dto;
+package com.SmartLaundry.laundry.Entity.Dto.User;
 
 import com.SmartLaundry.laundry.Entity.Roles.UserRole;
 import lombok.Data;

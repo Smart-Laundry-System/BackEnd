@@ -1,4 +1,4 @@
-package com.SmartLaundry.laundry.Entity.Dto;
+package com.SmartLaundry.laundry.Entity.Dto.NotificationsCom;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

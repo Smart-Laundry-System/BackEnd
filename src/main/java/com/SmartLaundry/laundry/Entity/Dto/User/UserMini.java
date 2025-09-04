@@ -1,4 +1,4 @@
-package com.SmartLaundry.laundry.Entity.Dto;
+package com.SmartLaundry.laundry.Entity.Dto.User;
 
 public class UserMini {
     private Long id;

@@ -2,6 +2,7 @@ package com.SmartLaundry.laundry.Entity.Laundry;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 
 
 @Table(
@@ -12,6 +13,7 @@ import jakarta.persistence.*;
 public class Services {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @EqualsAndHashCode.Exclude
     @Column(name = "service_id")
     private Long id;
 
@@ -39,7 +41,6 @@ public class Services {
                 ", title='" + title + '\'' +
                 ", category='" + category + '\'' +
                 ", price='" + price + '\'' +
-                ", laundry=" + laundry +
                 '}';
     }
 

@@ -1,4 +1,4 @@
-package com.SmartLaundry.laundry.Dto.User;
+package com.SmartLaundry.laundry.Entity.Dto.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

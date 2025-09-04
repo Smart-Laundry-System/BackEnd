@@ -97,6 +97,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
@@ -112,9 +113,8 @@ public class JWTService {
     private final UserRepository repository;
     private final String secretKey;
 
-    // 30 hours (was millis bug before)
-    private static final long EXP_MILLIS = 1000L * 60 * 60 * 30;
-
+    @Value("${jwt.expiration}")
+    private long exp_millis;
     public JWTService(UserRepository repository){
         this.repository = repository;
         // Prefer fixed key from env for stable tokens across restarts; fallback to generated for dev
@@ -151,7 +151,7 @@ public class JWTService {
                 .add(claims)
                 .subject(userName)
                 .issuedAt(now)
-                .expiration(new Date(now.getTime() + EXP_MILLIS))
+                .expiration(new Date(now.getTime() + exp_millis))
                 .and()
                 .signWith(getKey())
                 .compact();

@@ -1,6 +1,6 @@
 package com.SmartLaundry.laundry.Controller.Order;
 
-import com.SmartLaundry.laundry.Dto.Order.OrderDto;
+import com.SmartLaundry.laundry.Entity.Dto.Order.OrderDto;
 import com.SmartLaundry.laundry.Entity.Order.CustomerOrder;
 import com.SmartLaundry.laundry.Entity.Order.OrderStatus;
 import com.SmartLaundry.laundry.Service.Order.OrderService;
@@ -42,6 +42,12 @@ public class OrderController {
         return body;
     }
 
+    @GetMapping("/retriveCustomerRelatedOrder")
+    public ResponseEntity<?> retriveCustomerRelatedOrder(@RequestParam String email){
+        ResponseEntity<?> body = service.retriveCustomerRelatedOrder(email);
+        return body;
+    }
+
     @GetMapping("/retriveOrderById")
     public ResponseEntity<?> retriveOrderById(@RequestParam Long orderID){
         return service.retriveOrderById(orderID);
@@ -52,5 +58,21 @@ public class OrderController {
         return service.updateStatus(orderID,status);
     }
 
+    @PostMapping("/order/acceptNewDate")
+    public ResponseEntity<?> acceptNewDate(@RequestParam Long orderID) {
+        return ResponseEntity.ok(service.acceptProposedDate(orderID));
+    }
+
+    // customer taps "Reject the new date"
+    @PostMapping("/order/rejectNewDate")
+    public ResponseEntity<?> rejectNewDate(@RequestParam Long orderID) {
+        return ResponseEntity.ok(service.rejectProposedDate(orderID));
+    }
+
+    @PutMapping("/order/updateEstimatedDate")
+    public ResponseEntity<?> updateEstimatedDate(@RequestParam Long orderID,
+                                                 @RequestParam String date) {
+        return service.updateEstimatedDate(orderID, date);
+    }
 
 }

@@ -143,7 +143,9 @@ import com.SmartLaundry.laundry.Entity.Notification.Notifications;
 import com.SmartLaundry.laundry.Entity.Order.CustomerOrder;
 import com.SmartLaundry.laundry.Entity.Roles.UserRole;
 import com.SmartLaundry.laundry.Entity.UserLaundry.UserLaundry;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,6 +160,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "user_id")
+    @EqualsAndHashCode.Exclude
     private Long id;
 
     @Column(unique = true, nullable = false)
@@ -186,18 +189,19 @@ public class User {
 //    private Set<UserLaundry> userLaundries = new LinkedHashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<UserLaundry> userLaundries = new java.util.ArrayList<>();
 
     @OneToMany
-    @JoinColumn(name = "ord_id")
+    @JsonIgnore
     private List<CustomerOrder> orders = new ArrayList<>();
 
     @OneToMany
-    @JoinColumn(name = "com_id")
+    @JsonIgnore
     private List<Complain> complain = new ArrayList<>();
 
     @OneToMany
-    @JoinColumn(name = "not_id")
+    @JsonIgnore
     private List<Notifications> notifications = new ArrayList<>();
 
     @Override
@@ -211,10 +215,6 @@ public class User {
                 ", phone='" + phone + '\'' +
                 ", phone_2='" + phone_2 + '\'' +
                 ", address='" + address + '\'' +
-                ", userLaundries=" + userLaundries +
-                ", orders=" + orders +
-                ", complain=" + complain +
-                ", notifications=" + notifications +
                 '}';
     }
 

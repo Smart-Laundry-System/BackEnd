@@ -4,10 +4,7 @@ package com.SmartLaundry.laundry.Entity.Complain;
 import com.SmartLaundry.laundry.Entity.User.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Setter
 @Getter
@@ -18,6 +15,7 @@ import lombok.Setter;
 public class Complain {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @EqualsAndHashCode.Exclude
     @Column(name = "com_id")
     private Long id;
 

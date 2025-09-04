@@ -63,10 +63,8 @@ package com.SmartLaundry.laundry.Service.User.Impl;
 ////                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
 ////    }
 //}
-import com.SmartLaundry.laundry.Dto.Laundry.LaundryDetailsDto;
-import com.SmartLaundry.laundry.Entity.Dto.UserDTO;
+import com.SmartLaundry.laundry.Entity.Dto.Laundry.LaundryDetailsDto;
 import com.SmartLaundry.laundry.Entity.Laundry.Laundry;
-import com.SmartLaundry.laundry.Entity.Roles.UserRole;
 import com.SmartLaundry.laundry.Entity.User.User;
 import com.SmartLaundry.laundry.Entity.User.UserPrinciple;
 import com.SmartLaundry.laundry.Entity.UserLaundry.UserLaundry;
@@ -74,7 +72,6 @@ import com.SmartLaundry.laundry.Entity.UserLaundry.UserLaundryRole;
 import com.SmartLaundry.laundry.Repository.Laundry.LaundryRepository;
 import com.SmartLaundry.laundry.Repository.Laundry.UserLaundryRepository;
 import com.SmartLaundry.laundry.Repository.User.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -82,7 +79,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 

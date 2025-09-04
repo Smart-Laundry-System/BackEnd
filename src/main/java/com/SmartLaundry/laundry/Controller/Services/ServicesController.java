@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/auth")
 public class ServicesController {
@@ -20,5 +22,10 @@ public class ServicesController {
     @GetMapping("/retriveServices")
     public ResponseEntity<?> retriveServices(@RequestParam Long id){
         return service.retriveServicesBasedOnLaundryId(id);
+    }
+
+    @GetMapping("/retriveServiceById")
+    public ResponseEntity<?> retriveServiceById(@RequestParam("ids") List<Long> id){
+        return service.RetriveAllServicesUsingIds(id);
     }
 }

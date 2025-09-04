@@ -1,8 +1,7 @@
 package com.SmartLaundry.laundry.Controller.Notification;
 
-import com.SmartLaundry.laundry.Entity.Dto.NotificationDTO;
-import com.SmartLaundry.laundry.Entity.Notification.Notifications;
-import com.SmartLaundry.laundry.Entity.Dto.NotificationRequest;
+import com.SmartLaundry.laundry.Entity.Dto.NotificationsCom.NotificationDTO;
+import com.SmartLaundry.laundry.Entity.Dto.NotificationsCom.NotificationRequest;
 import com.SmartLaundry.laundry.Notification.SseHub;
 import com.SmartLaundry.laundry.Service.Notification.NotificationsService;
 import jakarta.validation.Valid;
@@ -60,13 +59,14 @@ public class NotificationController {
     }
 
     // LIVE (SSE)
-//    @GetMapping(path = "/notifications/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
-//    public SseEmitter stream(@RequestParam String email) {
-//        SseEmitter emitter = sseHub.subscribe(email);
-//        // push initial unseen count
-//        long count = service.unseenCount(email);
-//        sseHub.push(email, "notification.update",
-//                new NotificationsService.LivePayload(count, java.time.Instant.now().toString()));
-//        return emitter;
-//    }
+    @GetMapping(path = "/notifications/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    public SseEmitter subscribe(@RequestParam String email) {
+        var emitter = sseHub.subscribe(email);
+        try {
+            long count = service.unseenCount(email);
+            sseHub.push(email, "unseenCount", Map.of("unseen", count));
+        } catch (Exception ignored) {}
+
+        return emitter;
+    }
 }

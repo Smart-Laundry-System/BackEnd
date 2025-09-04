@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ServicesService {
     private final Mappers mappers;
@@ -29,5 +31,15 @@ public class ServicesService {
                 .toList();
 
         return ResponseEntity.ok(dto);
+    }
+
+    public ResponseEntity<?> RetriveAllServicesUsingIds(List<Long> id) {
+        if(id ==null || id.isEmpty()){
+            return ResponseEntity.badRequest().body("Id's not available");
+        }
+        var list = repository.findAllById(id).stream()
+                .map(mappers::toServiceLite)
+                .toList();
+        return ResponseEntity.ok().body(list);
     }
 }

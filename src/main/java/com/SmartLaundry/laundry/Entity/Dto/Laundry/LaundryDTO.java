@@ -1,4 +1,7 @@
-package com.SmartLaundry.laundry.Entity.Dto;
+package com.SmartLaundry.laundry.Entity.Dto.Laundry;
+
+import com.SmartLaundry.laundry.Entity.Dto.User.CustomerLite;
+import com.SmartLaundry.laundry.Entity.Dto.Services.ServiceLite;
 
 import java.util.List;
 

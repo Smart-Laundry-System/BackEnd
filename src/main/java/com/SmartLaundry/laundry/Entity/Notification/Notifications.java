@@ -3,6 +3,8 @@ package com.SmartLaundry.laundry.Entity.Notification;
 import com.SmartLaundry.laundry.Entity.User.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import lombok.EqualsAndHashCode;
+
 import java.sql.Date;
 import java.sql.Time;
 
@@ -11,6 +13,7 @@ public class Notifications {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "not_id")
+    @EqualsAndHashCode.Exclude
     private Long id;
 
     @Column
@@ -98,7 +101,6 @@ public class Notifications {
                 ", message='" + message + '\'' +
                 ", laundryImg='" + laundryImg + '\'' +
                 ", status=" + status +
-                ", user=" + user +
                 '}';
     }
 }

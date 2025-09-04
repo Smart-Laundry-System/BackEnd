@@ -70,16 +70,15 @@ package com.SmartLaundry.laundry.Controller.Login;
 //
 //}
 
-import com.SmartLaundry.laundry.Dto.Laundry.LaundryCreateRequest;
-import com.SmartLaundry.laundry.Dto.User.EmailSender;
-import com.SmartLaundry.laundry.Dto.User.LoginRequest;
-import com.SmartLaundry.laundry.Dto.User.UserUpdate;
+import com.SmartLaundry.laundry.Entity.Dto.Laundry.LaundryCreateRequest;
+import com.SmartLaundry.laundry.Entity.Dto.User.EmailSender;
+import com.SmartLaundry.laundry.Entity.Dto.User.LoginRequest;
+import com.SmartLaundry.laundry.Entity.Dto.User.UserUpdate;
 import com.SmartLaundry.laundry.Entity.Roles.UserRole;
 import com.SmartLaundry.laundry.Service.Emile.EmailService;
 import com.SmartLaundry.laundry.Service.Laundry.LaundryService;
 import com.SmartLaundry.laundry.Service.User.Auth.AuthonticationLoginService;
 import com.SmartLaundry.laundry.Entity.User.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -127,7 +126,6 @@ public class AuthonticationLogin {
         return ResponseEntity.ok().body(message);
     }
 
-    // Step 1: Send OTP
     @PostMapping("/forgotPassword")
     public ResponseEntity<?> sendOtp(@RequestBody EmailSender user) {
         String response = emailService.sendForgotPasswordOTP(user.getEmail());
@@ -138,11 +136,6 @@ public class AuthonticationLogin {
         }
     }
 
-    /**
-     * NOTE: Laundry no longer extends User (no password here).
-     * We accept a LaundryCreateRequest that includes who owns it and all laundry fields.
-     * Route and method name kept the same.
-     */
     @PostMapping("/addLaundry")
     public ResponseEntity<?> addLaundry(@RequestBody LaundryCreateRequest request){
         if (request.getRole() == null) {
@@ -155,7 +148,7 @@ public class AuthonticationLogin {
         return ResponseEntity.ok().body(message);
     }
 
-    // Step 2: Reset Password with OTP
+
     @PutMapping("/resetPassword")
     public ResponseEntity<?> resetPassword(@RequestBody UserUpdate request) {
         request.setPassword(encoder.encode(request.getPassword()));

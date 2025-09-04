@@ -1,4 +1,4 @@
-package com.SmartLaundry.laundry.Dto.User;
+package com.SmartLaundry.laundry.Entity.Dto.User;
 
 //import jakarta.persistence.Entity;
 //import jakarta.persistence.Id;
@@ -43,8 +43,7 @@ public class LoginRequest {
     @Override
     public String toString() {
         return "LoginRequest{" +
-//                "id=" + id +
-                ", username='" + username + '\'' +
+                "username='" + username + '\'' +
                 ", password='" + password + '\'' +
                 '}';
     }

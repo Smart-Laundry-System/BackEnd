@@ -1,9 +1,9 @@
 package com.SmartLaundry.laundry.Service;
 
 import com.SmartLaundry.laundry.API.Mappers;
-import com.SmartLaundry.laundry.Entity.Dto.LaundryDTO;
-import com.SmartLaundry.laundry.Entity.Dto.LaundryLite;
-import com.SmartLaundry.laundry.Entity.Dto.UserDTO;
+import com.SmartLaundry.laundry.Entity.Dto.Laundry.LaundryDTO;
+import com.SmartLaundry.laundry.Entity.Dto.Laundry.LaundryLite;
+import com.SmartLaundry.laundry.Entity.Dto.User.UserDTO;
 import com.SmartLaundry.laundry.Entity.Laundry.Laundry;
 import com.SmartLaundry.laundry.Entity.Roles.UserRole;
 import com.SmartLaundry.laundry.Entity.User.User;

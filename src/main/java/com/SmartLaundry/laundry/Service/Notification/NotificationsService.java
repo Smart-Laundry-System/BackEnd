@@ -1,9 +1,8 @@
 package com.SmartLaundry.laundry.Service.Notification;
 
 import com.SmartLaundry.laundry.API.Mappers;
-import com.SmartLaundry.laundry.Entity.Dto.NotificationDTO;
-import com.SmartLaundry.laundry.Entity.Dto.NotificationRequest;
-import com.SmartLaundry.laundry.Entity.Laundry.Laundry;
+import com.SmartLaundry.laundry.Entity.Dto.NotificationsCom.NotificationDTO;
+import com.SmartLaundry.laundry.Entity.Dto.NotificationsCom.NotificationRequest;
 import com.SmartLaundry.laundry.Entity.Notification.NotificationStatus;
 import com.SmartLaundry.laundry.Entity.Notification.Notifications;
 import com.SmartLaundry.laundry.Entity.User.User;
@@ -21,8 +20,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static org.apache.logging.log4j.util.Strings.isBlank;
 
 @Service
 public class NotificationsService {
@@ -44,28 +41,87 @@ public class NotificationsService {
         this.sseHub = sseHub;
     }
 
+//    @Transactional
+//    public int addNotification(NotificationRequest req) {
+//        final long now = System.currentTimeMillis();
+//        final Date today = new Date(now);
+//        final Time nowTime = new Time(now);
+//
+//        final String targetLaundryEmail =
+//                Optional.ofNullable(req.getLaundryEmail()).orElse("")
+//                        .trim().toLowerCase();
+//
+//        // ⬇️ Pull laundry (by own email OR owner email) to get image/name
+//        var laundryOpt = laundryRepo.findByEmailOrOwnerEmailIgnoreCase(targetLaundryEmail);
+//        final String laundryImg = laundryOpt.map(l -> l.getLaundryImg()).orElse(null);
+//        final String laundryNameFallback = laundryOpt.map(l -> l.getName()).orElse(null);
+//
+//        List<User> recipients = new ArrayList<>();
+//
+//        if (isBlank(req.getCustomerEmail())) {
+//            recipients.addAll(
+//                    userRepo.findAllByLaundryEmailOrOwnerEmailAndRole(
+//                            targetLaundryEmail, UserLaundryRole.CUSTOMER)
+//            );
+//            if (recipients.isEmpty()) {
+//                recipients.addAll(
+//                        userRepo.findAllCustomersByOrderLaundryEmail(targetLaundryEmail)
+//                );
+//            }
+//        } else {
+//            userRepo.findByEmail(req.getCustomerEmail().trim().toLowerCase())
+//                    .ifPresent(recipients::add);
+//        }
+//
+//        List<Notifications> toSave = new ArrayList<>();
+//        for (User u : recipients) {
+//            Notifications n = new Notifications();
+//            // prefer request name, otherwise fallback from Laundry entity
+//            n.setLaundryName(
+//                    isBlank(req.getLaundryName()) ? laundryNameFallback : req.getLaundryName()
+//            );
+//            n.setLaundryEmail(targetLaundryEmail);
+//            n.setLaundryImg(laundryImg);                // ⬅️ SET IMAGE
+//            n.setCustomerEmail(u.getEmail());
+//            n.setSubject(req.getSubject());
+//            n.setMessage(req.getMessage());
+//            n.setStatus(NotificationStatus.UNSEEN);
+//            n.setDate(today);
+//            n.setTime(nowTime);
+//            n.setUser(u);
+//            toSave.add(n);
+//        }
+//
+//        if (toSave.isEmpty()) return 0;
+//
+//        notificationRepo.saveAll(toSave);
+//        toSave.forEach(n -> sendLiveUpdate(n.getCustomerEmail()));
+//        return toSave.size();
+//    }
+
     @Transactional
     public int addNotification(NotificationRequest req) {
         final long now = System.currentTimeMillis();
         final Date today = new Date(now);
         final Time nowTime = new Time(now);
 
-        final String targetLaundryEmail =
-                Optional.ofNullable(req.getLaundryEmail()).orElse("")
-                        .trim().toLowerCase();
+        final String targetLaundryEmail = Optional.ofNullable(req.getLaundryEmail())
+                .orElse("").trim().toLowerCase();
 
-        // ⬇️ Pull laundry (by own email OR owner email) to get image/name
+        // Try to resolve laundry by OWNER email; ok if not present
         var laundryOpt = laundryRepo.findByEmailOrOwnerEmailIgnoreCase(targetLaundryEmail);
         final String laundryImg = laundryOpt.map(l -> l.getLaundryImg()).orElse(null);
         final String laundryNameFallback = laundryOpt.map(l -> l.getName()).orElse(null);
 
+        // Build recipients
         List<User> recipients = new ArrayList<>();
-
-        if (isBlank(req.getCustomerEmail())) {
+        if (req.getCustomerEmail() == null || req.getCustomerEmail().isBlank()) {
+            // 1) linked customers
             recipients.addAll(
                     userRepo.findAllByLaundryEmailOrOwnerEmailAndRole(
                             targetLaundryEmail, UserLaundryRole.CUSTOMER)
             );
+            // 2) fallback: customers who have ordered from this laundry email
             if (recipients.isEmpty()) {
                 recipients.addAll(
                         userRepo.findAllCustomersByOrderLaundryEmail(targetLaundryEmail)
@@ -76,15 +132,16 @@ public class NotificationsService {
                     .ifPresent(recipients::add);
         }
 
-        List<Notifications> toSave = new ArrayList<>();
+        if (recipients.isEmpty()) return 0;
+
+        List<Notifications> toSave = new ArrayList<>(recipients.size());
         for (User u : recipients) {
             Notifications n = new Notifications();
-            // prefer request name, otherwise fallback from Laundry entity
-            n.setLaundryName(
-                    isBlank(req.getLaundryName()) ? laundryNameFallback : req.getLaundryName()
-            );
+            n.setLaundryName( (req.getLaundryName() == null || req.getLaundryName().isBlank())
+                    ? laundryNameFallback
+                    : req.getLaundryName() );
             n.setLaundryEmail(targetLaundryEmail);
-            n.setLaundryImg(laundryImg);                // ⬅️ SET IMAGE
+            n.setLaundryImg(laundryImg);
             n.setCustomerEmail(u.getEmail());
             n.setSubject(req.getSubject());
             n.setMessage(req.getMessage());
@@ -95,9 +152,8 @@ public class NotificationsService {
             toSave.add(n);
         }
 
-        if (toSave.isEmpty()) return 0;
-
         notificationRepo.saveAll(toSave);
+        // live updates
         toSave.forEach(n -> sendLiveUpdate(n.getCustomerEmail()));
         return toSave.size();
     }

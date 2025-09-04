@@ -96,7 +96,7 @@ package com.SmartLaundry.laundry.Service.User.Auth;
 //    }
 //}
 
-import com.SmartLaundry.laundry.Dto.User.LoginRequest;
+import com.SmartLaundry.laundry.Entity.Dto.User.LoginRequest;
 import com.SmartLaundry.laundry.Entity.Laundry.Laundry;
 import com.SmartLaundry.laundry.Entity.Roles.UserRole;
 import com.SmartLaundry.laundry.Entity.User.User;
@@ -107,7 +107,6 @@ import com.SmartLaundry.laundry.Repository.Laundry.UserLaundryRepository;
 import com.SmartLaundry.laundry.Repository.User.UserRepository;
 import com.SmartLaundry.laundry.Service.Emile.EmailService;
 import com.SmartLaundry.laundry.Service.JWT.JWTService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -220,7 +219,7 @@ public class AuthonticationLoginService {
         try {
             Optional<User> existing = userRepository.findByEmail(user.getEmail());
             if (existing.isPresent()) {
-                return "User already exist";
+                throw new Exception("Customer already added");
             }
             userRepository.save(user);
             return "User added successfully";

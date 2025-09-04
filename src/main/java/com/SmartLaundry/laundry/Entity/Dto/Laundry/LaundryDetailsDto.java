@@ -1,4 +1,4 @@
-package com.SmartLaundry.laundry.Dto.Laundry;
+package com.SmartLaundry.laundry.Entity.Dto.Laundry;
 
 import com.SmartLaundry.laundry.Entity.Laundry.Services;
 

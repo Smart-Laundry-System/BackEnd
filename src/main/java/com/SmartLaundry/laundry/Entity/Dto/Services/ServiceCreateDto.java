@@ -1,4 +1,4 @@
-package com.SmartLaundry.laundry.Entity.Dto;
+package com.SmartLaundry.laundry.Entity.Dto.Services;
 
 public class ServiceCreateDto {
     private String title;

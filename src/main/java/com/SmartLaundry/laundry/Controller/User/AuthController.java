@@ -31,19 +31,16 @@ package com.SmartLaundry.laundry.Controller.User;
 //
 //}
 
-import com.SmartLaundry.laundry.Dto.Laundry.LaundryDetailsDto;
-import com.SmartLaundry.laundry.Entity.Dto.LaundryDTO;
-import com.SmartLaundry.laundry.Entity.Dto.UserDTO;
+import com.SmartLaundry.laundry.Entity.Dto.Laundry.LaundryDetailsDto;
+import com.SmartLaundry.laundry.Entity.Dto.Laundry.LaundryDTO;
+import com.SmartLaundry.laundry.Entity.Dto.User.UserDTO;
 import com.SmartLaundry.laundry.Entity.Laundry.UpdateCustomer;
-import com.SmartLaundry.laundry.Entity.User.User;
 import com.SmartLaundry.laundry.Service.CustomerLinkService;
 import com.SmartLaundry.laundry.Service.User.Impl.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")

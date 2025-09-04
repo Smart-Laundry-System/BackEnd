@@ -1,7 +1,13 @@
 package com.SmartLaundry.laundry.API;
 
-import com.SmartLaundry.laundry.Dto.Order.OrderDto;
-import com.SmartLaundry.laundry.Entity.Dto.*;
+import com.SmartLaundry.laundry.Entity.Dto.Laundry.LaundryDTO;
+import com.SmartLaundry.laundry.Entity.Dto.Laundry.LaundryLite;
+import com.SmartLaundry.laundry.Entity.Dto.NotificationsCom.NotificationDTO;
+import com.SmartLaundry.laundry.Entity.Dto.Order.OrderDto;
+import com.SmartLaundry.laundry.Entity.Dto.Services.ServiceLite;
+import com.SmartLaundry.laundry.Entity.Dto.User.CustomerLite;
+import com.SmartLaundry.laundry.Entity.Dto.User.UserDTO;
+import com.SmartLaundry.laundry.Entity.Dto.User.UserMini;
 import com.SmartLaundry.laundry.Entity.Laundry.Laundry;
 import com.SmartLaundry.laundry.Entity.Laundry.Services;
 import com.SmartLaundry.laundry.Entity.Notification.Notifications;
@@ -83,6 +89,7 @@ public class Mappers {
                 order.getLaundryAddress(),
                 order.getTotPrice(),
                 order.getLaundryImg(),
+                order.getEstimatedDate(),
                 order.getStatus(),
                 customerName,
                 customerPhone

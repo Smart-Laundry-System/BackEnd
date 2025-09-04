@@ -5,13 +5,12 @@ import com.SmartLaundry.laundry.Entity.Laundry.Services;
 import com.SmartLaundry.laundry.Entity.User.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Entity
 @NoArgsConstructor
@@ -20,6 +19,7 @@ public class CustomerOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "ord_id")
+    @EqualsAndHashCode.Exclude
     private Long id;
 
     @ElementCollection(fetch = FetchType.EAGER) // or LAZY if you prefer
@@ -48,12 +48,15 @@ public class CustomerOrder {
     @Column(nullable = true)
     private double totPrice;
 
-    @Column(nullable = true)
+    @Column
     private String laundryImg;
 
+    @Column
+    private Date estimatedDate = new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(3));
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
-    private OrderStatus status = OrderStatus.PICKUP;
+    @Column
+    private OrderStatus status = OrderStatus.UNCONFIRMED;
 
     @JsonIgnore
     @ManyToOne
@@ -72,9 +75,17 @@ public class CustomerOrder {
                 ", laundryAddress='" + laundryAddress + '\'' +
                 ", totPrice=" + totPrice +
                 ", laundryImg='" + laundryImg + '\'' +
+                ", estimatedDate=" + estimatedDate +
                 ", status=" + status +
-                ", users=" + users +
                 '}';
+    }
+
+    public Date getEstimatedDate() {
+        return estimatedDate;
+    }
+
+    public void setEstimatedDate(Date estimatedDate) {
+        this.estimatedDate = estimatedDate;
     }
 
     public String getCustomerAddress() {
