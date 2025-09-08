@@ -54,6 +54,12 @@ public class CustomerOrder {
     @Column
     private Date estimatedDate = new Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(3));
 
+    @Column
+    private Date requestDate;
+
+    @Column
+    private String aboutLaundry;
+
     @Enumerated(EnumType.STRING)
     @Column
     private OrderStatus status = OrderStatus.UNCONFIRMED;
@@ -76,8 +82,26 @@ public class CustomerOrder {
                 ", totPrice=" + totPrice +
                 ", laundryImg='" + laundryImg + '\'' +
                 ", estimatedDate=" + estimatedDate +
+                ", requestDate=" + requestDate +
+                ", aboutLaundry='" + aboutLaundry + '\'' +
                 ", status=" + status +
                 '}';
+    }
+
+    public String getAboutLaundry() {
+        return aboutLaundry;
+    }
+
+    public void setAboutLaundry(String aboutLaundry) {
+        this.aboutLaundry = aboutLaundry;
+    }
+
+    public Date getRequestDate() {
+        return requestDate;
+    }
+
+    public void setRequestDate(Date requestDate) {
+        this.requestDate = requestDate;
     }
 
     public Date getEstimatedDate() {

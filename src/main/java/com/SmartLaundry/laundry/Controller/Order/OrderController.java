@@ -53,6 +53,8 @@ public class OrderController {
         return service.retriveOrderById(orderID);
     }
 
+
+
     @PutMapping("/updateStatus")
     public ResponseEntity<?> updateStatus(@RequestParam Long orderID, @RequestParam OrderStatus status){
         return service.updateStatus(orderID,status);
@@ -73,6 +75,12 @@ public class OrderController {
     public ResponseEntity<?> updateEstimatedDate(@RequestParam Long orderID,
                                                  @RequestParam String date) {
         return service.updateEstimatedDate(orderID, date);
+    }
+
+    @PutMapping("/order/requestEstimatedDate")
+    public ResponseEntity<?> requestEstimatedDate(@RequestParam Long orderID,
+                                                 @RequestParam String date) {
+        return service.requestEstimatedDate(orderID, date);
     }
 
 }

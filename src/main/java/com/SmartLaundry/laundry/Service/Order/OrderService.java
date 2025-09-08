@@ -145,7 +145,7 @@ public class OrderService {
             total += parsePrice(s.getPrice()); // you already have parsePrice(...)
         }
         order.setTotPrice(total);
-
+        order.setAboutLaundry(laundry.getAbout());
         // 4) persist
         repository.save(order);
         return "Order completed";
@@ -236,14 +236,14 @@ public class OrderService {
         CustomerOrder order = opt.get();
 
         // We treat "customerInterestDate" as the customer's proposed/new date
-        if (order.getEstimatedDate() == null) {
+        if (order.getRequestDate() == null) {
             return ResponseEntity.badRequest()
                     .body("No proposed date to accept for order " + orderID);
         }
 
         // Accept: make the proposed date the official estimated date and clear the proposal
-        order.setEstimatedDate(order.getEstimatedDate());
-        order.setEstimatedDate(null);
+        order.setEstimatedDate(order.getRequestDate());
+        order.setRequestDate(null);
 
         repository.save(order);
         OrderDto dto = mappers.toOrderDTO(order);
@@ -264,7 +264,7 @@ public class OrderService {
         CustomerOrder order = opt.get();
 
         // Reject: simply clear the customer's proposed date (keep current estimated date as-is)
-        order.setEstimatedDate(null);
+        order.setRequestDate(null);
 
         repository.save(order);
         OrderDto dto = mappers.toOrderDTO(order);
@@ -304,5 +304,24 @@ public class OrderService {
                 .toList();
 
         return ResponseEntity.ok(orders);
+    }
+
+    public ResponseEntity<?> requestEstimatedDate(Long orderID, String date) {
+        if (orderID == null || date == null || date.isBlank()) {
+            return ResponseEntity.badRequest().body("orderID and date are required.");
+        }
+        var opt = repository.findById(orderID);
+        if (opt.isEmpty()) {
+            return ResponseEntity.status(404).body("No order found for id " + orderID);
+        }
+        try {
+            Date newDate = Date.from(Instant.parse(date)); // expects ISO 8601
+            CustomerOrder order = opt.get();
+            order.setRequestDate(newDate);
+            repository.save(order);
+            return ResponseEntity.ok(mappers.toOrderDTO(order));
+        } catch (DateTimeParseException ex) {
+            return ResponseEntity.badRequest().body("Invalid ISO date: " + date);
+        }
     }
 }

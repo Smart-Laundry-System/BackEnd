@@ -4,7 +4,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public class NotificationRequest {
-    @NotBlank private String laundryName;
+    private String laundryName;
     @NotBlank @Email private String laundryEmail;
 
     // If null/blank → send to ALL related customers

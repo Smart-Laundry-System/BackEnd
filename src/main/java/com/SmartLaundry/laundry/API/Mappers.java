@@ -90,9 +90,11 @@ public class Mappers {
                 order.getTotPrice(),
                 order.getLaundryImg(),
                 order.getEstimatedDate(),
+                order.getRequestDate(),
                 order.getStatus(),
                 customerName,
-                customerPhone
+                customerPhone,
+                order.getAboutLaundry()
         );
     }
 

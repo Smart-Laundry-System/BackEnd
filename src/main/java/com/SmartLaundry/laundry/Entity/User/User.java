@@ -145,6 +145,8 @@ import com.SmartLaundry.laundry.Entity.Roles.UserRole;
 import com.SmartLaundry.laundry.Entity.UserLaundry.UserLaundry;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
 
 import java.util.ArrayList;
@@ -170,6 +172,11 @@ public class User {
     private String name;
 
     @Column(nullable = false)
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @Pattern(
+            regexp = "^(?=.*[!@#$%^&*(),.?\":{}|<>]).+$",
+            message = "Password must contain at least one special character"
+    )
     private String password;
 
     @Enumerated(EnumType.STRING)

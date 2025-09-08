@@ -113,6 +113,7 @@ public class NotificationsService {
         final String laundryImg = laundryOpt.map(l -> l.getLaundryImg()).orElse(null);
         final String laundryNameFallback = laundryOpt.map(l -> l.getName()).orElse(null);
 
+
         // Build recipients
         List<User> recipients = new ArrayList<>();
         if (req.getCustomerEmail() == null || req.getCustomerEmail().isBlank()) {

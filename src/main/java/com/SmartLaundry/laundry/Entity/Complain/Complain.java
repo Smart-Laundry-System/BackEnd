@@ -26,6 +26,9 @@ public class Complain {
     private String customer_email;
 
     @Column(nullable = false)
+    private String subject;
+
+    @Column(nullable = false)
     private String message;
 
     @Column(nullable = false)
@@ -40,6 +43,7 @@ public class Complain {
                 "id=" + id +
                 ", laundry_email='" + laundry_email + '\'' +
                 ", customer_email='" + customer_email + '\'' +
+                ", subject='" + subject + '\'' +
                 ", message='" + message + '\'' +
                 ", order_id=" + order_id +
                 ", customer_id=" + customer_id +

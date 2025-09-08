@@ -16,7 +16,9 @@ public record OrderDto(
         double totPrice,
         String laundryImg,
         Date estimatedDate,
+        Date requestDate,
         OrderStatus status,
         String customerName,
-        String customerPhone
+        String customerPhone,
+        String aboutLaundry
 ) {}
