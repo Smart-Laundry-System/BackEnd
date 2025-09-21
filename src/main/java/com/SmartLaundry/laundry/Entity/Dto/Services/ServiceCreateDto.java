@@ -2,14 +2,14 @@ package com.SmartLaundry.laundry.Entity.Dto.Services;
 
 public class ServiceCreateDto {
     private String title;
-    private String category;
+//    private String category;
     private String price;
 
     @Override
     public String toString() {
         return "ServiceCreateDto{" +
                 "title='" + title + '\'' +
-                ", category='" + category + '\'' +
+//                ", category='" + category + '\'' +
                 ", price='" + price + '\'' +
                 '}';
     }
@@ -22,13 +22,13 @@ public class ServiceCreateDto {
         this.title = title;
     }
 
-    public String getCategory() {
-        return category;
-    }
+//    public String getCategory() {
+//        return category;
+//    }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
+//    public void setCategory(String category) {
+//        this.category = category;
+//    }
 
     public String getPrice() {
         return price;

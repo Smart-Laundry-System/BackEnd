@@ -105,7 +105,9 @@ public class AuthonticationLogin {
         if (user.getRole() == null) {
             user.setRole(UserRole.CUSTOMER);
         }
-        user.setPassword(encoder.encode(user.getPassword()));
+
+        String rawPassword = user.getPassword();
+        user.setPassword(encoder.encode(rawPassword));
         String message = userService.appRegister(user);
         return ResponseEntity.ok().body(message);
     }
@@ -115,7 +117,9 @@ public class AuthonticationLogin {
         if (user.getRole() == null) {
             user.setRole(UserRole.CUSTOMER);
         }
-        user.setPassword(encoder.encode(user.getPassword()));
+
+        String rawPassword = user.getPassword();
+        user.setPassword(encoder.encode(rawPassword));
         String message = userService.registerUser(user,laundryEmail);
         return ResponseEntity.ok().body(message);
     }
@@ -141,8 +145,10 @@ public class AuthonticationLogin {
         if (request.getRole() == null) {
             request.setRole(UserRole.LAUNDRY);
         }
-        if (request.getPassword() != null) {
-            request.setPassword(encoder.encode(request.getPassword()));
+
+        String rawPassword = request.getPassword();
+        if (rawPassword != null) {
+            request.setPassword(encoder.encode(rawPassword));
         }
         String message = laundryService.registerLaundry(request);
         return ResponseEntity.ok().body(message);

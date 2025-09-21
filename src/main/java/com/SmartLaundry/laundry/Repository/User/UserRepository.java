@@ -11,29 +11,30 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-
     Optional<User> findByEmail(String email);
 
     List<User> findByRole(UserRole role);
 
-
     @Query("""
-  select distinct u
-  from User u
-  join u.userLaundries ul
-  join ul.laundry l
-  where lower(l.owner.email) = lower(:laundryEmail)
-    and ul.relationRole = :role
-""")
+           select distinct u
+           from User u
+           join u.userLaundries ul
+           join ul.laundry l
+           where lower(l.owner.email) = lower(:laundryEmail)
+             and ul.relationRole = :role
+           """)
     List<User> findAllByLaundryEmailOrOwnerEmailAndRole(
             @Param("laundryEmail") String laundryEmail,
-            @Param("role") UserLaundryRole role);
+            @Param("role") UserLaundryRole role
+    );
 
+    // ⬇️ The method you asked for, now valid with Option B mapping
     @Query("""
            select distinct u
            from User u
            join u.orders o
-           where lower(o.laundryEmail) = lower(:laundryEmail)
+           where lower(o.laundry.owner.email) = lower(:laundryEmail)
            """)
-    List<User> findAllCustomersByOrderLaundryEmail(@Param("laundryEmail") String laundryEmail);
+    List<User> findAllCustomersByOrderLaundryOwnerEmail(@Param("laundryEmail") String laundryEmail);
+
 }

@@ -47,7 +47,7 @@ public class Mappers {
 
     // NEW: Service -> ServiceLite
     public ServiceLite toServiceLite(Services s) {
-        return new ServiceLite(s.getId(), s.getTitle(), s.getCategory(), s.getPrice());
+        return new ServiceLite(s.getId(), s.getTitle(), s.getPrice());
     }
 
     public LaundryDTO toLaundryDTO(Laundry l) {
@@ -64,7 +64,7 @@ public class Mappers {
                 .toList();
 
         return new LaundryDTO(
-                l.getId(), l.getName(), l.getPhone(), l.getAddress(),
+                l.getId(), l.getName(), l.getPhone(), l.getAddress(),l.getRating(),
                 services, l.getAvailableItems(), l.getOtherItems(), l.getLaundryImg(),
                 customers
         );
@@ -83,7 +83,7 @@ public class Mappers {
                 order.getId(),
                 order.getServiceIds(),
                 order.getCustomerEmail(),
-                order.getLaundryEmail(),
+                order.getLaundry().getId(),
                 order.getLaundryName(),
                 order.getCustomerAddress(),
                 order.getLaundryAddress(),

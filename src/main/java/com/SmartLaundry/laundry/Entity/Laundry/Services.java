@@ -20,8 +20,8 @@ public class Services {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
-    private String category;
+//    @Column(nullable = false)
+//    private String category;
 
     @Column(name = "price", nullable = false)
     private String price;
@@ -39,7 +39,7 @@ public class Services {
         return "Services{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
-                ", category='" + category + '\'' +
+//                ", category='" + category + '\'' +
                 ", price='" + price + '\'' +
                 '}';
     }
@@ -56,8 +56,8 @@ public class Services {
     public void setId(Long id) { this.id = id; }
     public String getTitle() { return title; }
     public void setTitle(String title) { this.title = title; }
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+//    public String getCategory() { return category; }
+//    public void setCategory(String category) { this.category = category; }
     public Laundry getLaundry() { return laundry; }
     public void setLaundry(Laundry laundry) { this.laundry = laundry; }
 }

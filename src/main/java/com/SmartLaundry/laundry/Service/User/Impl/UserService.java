@@ -72,6 +72,7 @@ import com.SmartLaundry.laundry.Entity.UserLaundry.UserLaundryRole;
 import com.SmartLaundry.laundry.Repository.Laundry.LaundryRepository;
 import com.SmartLaundry.laundry.Repository.Laundry.UserLaundryRepository;
 import com.SmartLaundry.laundry.Repository.User.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -79,6 +80,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -172,4 +176,48 @@ public class UserService implements UserDetailsService {
         }
         return "If customer new then added successfully";
     }
+    @Transactional(readOnly = true)
+    public LaundryDetailsDto retrieveDetailsById(Long id) {
+        Laundry laundry = laundryRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Laundry not found with id " + id));
+
+        LaundryDetailsDto dto = new LaundryDetailsDto();
+        dto.setId(laundry.getId()); // add this field in your DTO if missing
+        dto.setName(nullSafe(laundry.getName()));
+        dto.setPhone(nullSafe(laundry.getPhone()));
+        dto.setAddress(nullSafe(laundry.getAddress()));
+        dto.setLaundryImg(laundry.getLaundryImg()); // keep as-is if can be null
+        dto.setAbout(nullSafe(laundry.getAbout()));
+        dto.setRating(laundry.getRating());
+        dto.setOpenTime(laundry.getOpenTime());
+        dto.setCloseTime(laundry.getCloseTime());
+        dto.setServices(laundry.getServices());           // assuming non-entity collection or safe to expose
+        dto.setAvailableItems(laundry.getAvailableItems());
+        dto.setOtherItems(laundry.getOtherItems());
+
+        // users mapping (null-safe)
+        List<LaundryDetailsDto.UserSummary> users = Optional.ofNullable(laundry.getUserLaundries())
+                .orElseGet(Collections::emptyList)
+                .stream()
+                .map(ul -> {
+                    User u = ul.getUser();
+                    if (u == null) return null; // or skip
+                    String role = ul.getRelationRole() != null ? ul.getRelationRole().name() : null;
+                    return new LaundryDetailsDto.UserSummary(
+                            u.getId(),
+                            u.getName(),
+                            u.getEmail(),
+                            u.getPhone(),
+                            u.getAddress(),
+                            role
+                    );
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        dto.setUsers(users);
+        return dto;
+    }
+
+    private static String nullSafe(String s) { return s == null ? "" : s; }
 }

@@ -2,14 +2,17 @@ package com.SmartLaundry.laundry.Entity.Laundry;
 
 import com.SmartLaundry.laundry.Entity.User.User;
 import com.SmartLaundry.laundry.Entity.UserLaundry.UserLaundry;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "laundry")
@@ -25,6 +28,12 @@ public class Laundry {
     @Column(nullable = false) private String phone;
     @Column(nullable = false) private String address;
 
+    @Column(name = "rating_avg")
+    private Double rating = 0.0;
+
+    @Column(name = "rating_count")
+    private Long ratingCount = 0L;
+
     @OneToMany(mappedBy = "laundry", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Services> services = new ArrayList<>();
@@ -34,9 +43,27 @@ public class Laundry {
     @Column(name = "item")
     private List<String> availableItems;
 
-    @Column(nullable = false) private String otherItems;
+    @ElementCollection
+    @Column(nullable = false)
+    @CollectionTable(
+            name = "laundry_other_items",
+            joinColumns = @JoinColumn(name = "laundry_id")
+    )
+    private List<String> otherItems;
     @Column(nullable = false) private String laundryImg;
-    @Column(nullable = false) private String about;
+    @Column(nullable = false)
+    @Lob
+    @JdbcTypeCode(SqlTypes.LONGVARCHAR)
+    @Size(min = 60, max = 1200, message = "About must be between 60 and 1200 characters.")
+    private String about;
+
+    @JsonFormat(pattern = "HH:mm")
+    @Column(nullable = false)
+    private LocalTime openTime;
+
+    @JsonFormat(pattern = "HH:mm")
+    @Column(nullable = false)
+    private LocalTime closeTime;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -71,6 +98,27 @@ public class Laundry {
         this.userLaundries = userLaundries;
     }
 
+    public LocalTime getOpenTime() {
+        return openTime;
+    }
+
+    public void setOpenTime(LocalTime openTime) {
+        this.openTime = openTime;
+    }
+
+    public LocalTime getCloseTime() {
+        return closeTime;
+    }
+
+    public void setCloseTime(LocalTime closeTime) {
+        this.closeTime = closeTime;
+    }
+
+    public Double getRating() { return rating; }
+    public void setRating(Double rating) { this.rating = rating; }
+    public Long getRatingCount() { return ratingCount; }
+    public void setRatingCount(Long ratingCount) { this.ratingCount = ratingCount; }
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
@@ -83,8 +131,8 @@ public class Laundry {
     public void setServices(List<Services> services) { this.services = services; }
     public List<String> getAvailableItems() { return availableItems; }
     public void setAvailableItems(List<String> availableItems) { this.availableItems = availableItems; }
-    public String getOtherItems() { return otherItems; }
-    public void setOtherItems(String otherItems) { this.otherItems = otherItems; }
+    public List<String> getOtherItems() { return otherItems; }
+    public void setOtherItems(List<String> otherItems) { this.otherItems = otherItems; }
     public String getLaundryImg() { return laundryImg; }
     public void setLaundryImg(String laundryImg) { this.laundryImg = laundryImg; }
     public String getAbout() { return about; }
@@ -99,10 +147,14 @@ public class Laundry {
                 ", name='" + name + '\'' +
                 ", phone='" + phone + '\'' +
                 ", address='" + address + '\'' +
+                ", rating=" + rating +
+                ", ratingCount=" + ratingCount +
                 ", availableItems=" + availableItems +
-                ", otherItems='" + otherItems + '\'' +
+                ", otherItems=" + otherItems +
                 ", laundryImg='" + laundryImg + '\'' +
                 ", about='" + about + '\'' +
+                ", openTime=" + openTime +
+                ", closeTime=" + closeTime +
                 '}';
     }
 }

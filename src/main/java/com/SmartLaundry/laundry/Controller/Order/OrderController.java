@@ -1,5 +1,6 @@
 package com.SmartLaundry.laundry.Controller.Order;
 
+import com.SmartLaundry.laundry.Entity.Dto.Order.OrderCreateDto;
 import com.SmartLaundry.laundry.Entity.Dto.Order.OrderDto;
 import com.SmartLaundry.laundry.Entity.Order.CustomerOrder;
 import com.SmartLaundry.laundry.Entity.Order.OrderStatus;
@@ -8,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -20,7 +22,7 @@ public class OrderController {
     }
 
     @PostMapping("/addOrder")
-    public ResponseEntity<?> addOrder(@RequestBody CustomerOrder order){
+    public ResponseEntity<?> addOrder(@RequestBody OrderCreateDto order){
         String message = service.registerOrder(order);
         return ResponseEntity.ok().body(message);
     }

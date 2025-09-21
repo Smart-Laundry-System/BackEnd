@@ -27,4 +27,6 @@ public interface LaundryRepository extends JpaRepository<Laundry, Long> {
            where lower(l.owner.email) = lower(:email)
            """)
     Optional<Laundry> findByEmailOrOwnerEmailIgnoreCase(@Param("email") String email);
+
+    boolean findByLaundryEmailComplain(String laundryEmail);
 }

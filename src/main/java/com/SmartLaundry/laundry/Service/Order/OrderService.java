@@ -1,6 +1,7 @@
 package com.SmartLaundry.laundry.Service.Order;
 
 import com.SmartLaundry.laundry.API.Mappers;
+import com.SmartLaundry.laundry.Entity.Dto.Order.OrderCreateDto;
 import com.SmartLaundry.laundry.Entity.Dto.Order.OrderDto;
 import com.SmartLaundry.laundry.Entity.Laundry.Laundry;
 import com.SmartLaundry.laundry.Entity.Laundry.Services;
@@ -93,61 +94,39 @@ public class OrderService {
 //    }
 
     @Transactional
-    public String registerOrder(CustomerOrder order) {
-        // basic validations
-        if (order.getLaundryEmail() == null || order.getLaundryEmail().isBlank()) {
-            return "Order error: missing laundry owner email.";
-        }
-        if (order.getServiceIds() == null || order.getServiceIds().isEmpty()) {
+    public String registerOrder(OrderCreateDto order) {
+        if (order.getId() == null)
+            return "Order error: missing laundryId.";
+        if (order.getServiceIds() == null || order.getServiceIds().isEmpty())
             return "Order error: no services selected.";
-        }
-        if (order.getCustomerEmail() == null || order.getCustomerEmail().isBlank()) {
+        if (order.getCustomerEmail() == null || order.getCustomerEmail().isBlank())
             return "Order error: missing customer email.";
-        }
 
-        // 1) resolve Laundry by OWNER email
-        Laundry laundry = laundryRepository.findFirstByOwner_Email(order.getLaundryEmail()).orElse(null);
-        if (laundry == null) {
-            return "Order error: laundry not found for owner email.";
-        }
+        Laundry laundry = laundryRepository.findById(order.getId()).orElse(null);
+        if (laundry == null) return "Order error: laundry not found for laundryId.";
 
-        // 2) resolve Customer User by email and copy address
         User customer = userRepository.findByEmail(order.getCustomerEmail()).orElse(null);
-        if (customer == null) {
-            return "Order error: customer not found for customer email.";
-        }
+        if (customer == null) return "Order error: customer not found.";
 
-        // Write-through convenience info
-        order.setLaundryName(laundry.getName());
-        order.setLaundryImg(laundry.getLaundryImg());
-        order.setLaundryAddress(laundry.getAddress());
+        CustomerOrder customerOrder = new CustomerOrder();
+        customerOrder.setServiceIds(order.getServiceIds());
+        customerOrder.setCustomerEmail(order.getCustomerEmail());
+        customerOrder.setLaundry(laundry);        // <-- link entity
+        customerOrder.setUsers(customer);
+        customerOrder.setLaundryName(laundry.getName());
+        customerOrder.setLaundryImg(laundry.getLaundryImg());
+        customerOrder.setLaundryAddress(laundry.getAddress());
+        customerOrder.setCustomerAddress(customer.getAddress());
 
-        // If request didn't already provide a custom address, use user's saved address
-        if (order.getCustomerAddress() == null || order.getCustomerAddress().isBlank()) {
-            order.setCustomerAddress(customer.getAddress());
-        }
-
-        // Also link the entity relation if you keep it
-        order.setUsers(customer);
-
-        // 3) fetch services that belong to THIS laundry, compute total
-        List<Services> services = servicesRepository.findAllByIdInAndLaundry_Id(
-                order.getServiceIds(), laundry.getId()
-        );
-
-        // Safety: ensure every requested ID belongs to this laundry
-        if (services.size() != order.getServiceIds().size()) {
+        var services = servicesRepository.findAllByIdInAndLaundry_Id(order.getServiceIds(), laundry.getId());
+        if (services.size() != order.getServiceIds().size())
             return "Order error: one or more selected services do not belong to this laundry.";
-        }
 
-        double total = 0.0;
-        for (Services s : services) {
-            total += parsePrice(s.getPrice()); // you already have parsePrice(...)
-        }
-        order.setTotPrice(total);
-        order.setAboutLaundry(laundry.getAbout());
-        // 4) persist
-        repository.save(order);
+        double total = 0.0; for (Services s: services) total += parsePrice(s.getPrice());
+        customerOrder.setTotPrice(total);
+        customerOrder.setAboutLaundry(laundry.getAbout());
+
+        repository.save(customerOrder);
         return "Order completed";
     }
 
@@ -174,7 +153,7 @@ public class OrderService {
         }
 
         var orders = repository
-                .findByLaundryEmailIgnoreCaseOrderByIdDesc(target)
+                .findByLaundry_Owner_EmailIgnoreCaseOrderByIdDesc(target)
                 .stream()
                 .map(mappers::toOrderDTO)
                 .toList();

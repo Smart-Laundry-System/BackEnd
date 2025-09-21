@@ -125,7 +125,7 @@ public class NotificationsService {
             // 2) fallback: customers who have ordered from this laundry email
             if (recipients.isEmpty()) {
                 recipients.addAll(
-                        userRepo.findAllCustomersByOrderLaundryEmail(targetLaundryEmail)
+                        userRepo.findAllCustomersByOrderLaundryOwnerEmail(targetLaundryEmail)
                 );
             }
         } else {

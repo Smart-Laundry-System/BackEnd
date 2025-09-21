@@ -9,7 +9,7 @@ public record OrderDto(
         Long id,
         List<Long> serviceIds,
         String customerEmail,
-        String laundryEmail,
+        Long laundryId,
         String laundryName,
         String customerAddress,
         String laundryAddress,

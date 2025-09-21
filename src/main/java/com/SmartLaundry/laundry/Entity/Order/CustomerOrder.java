@@ -1,11 +1,15 @@
 package com.SmartLaundry.laundry.Entity.Order;
 
 
+import com.SmartLaundry.laundry.Entity.Laundry.Laundry;
 import com.SmartLaundry.laundry.Entity.Laundry.Services;
 import com.SmartLaundry.laundry.Entity.User.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Size;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -33,8 +37,13 @@ public class CustomerOrder {
     @Column(nullable = false)
     private String customerEmail;
 
-    @Column(nullable = false)
-    private String laundryEmail;
+//    @Column(nullable = false)
+//    private String laundryEmail;
+
+    // CustomerOrder.java
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "laundry_id", referencedColumnName = "laundry_id", nullable = false)
+    private Laundry laundry;
 
     @Column
     private String laundryName;
@@ -58,6 +67,9 @@ public class CustomerOrder {
     private Date requestDate;
 
     @Column
+    @Lob
+    @JdbcTypeCode(SqlTypes.LONGVARCHAR)
+    @Size(min = 60, max = 1200, message = "About must be between 60 and 1200 characters.")
     private String aboutLaundry;
 
     @Enumerated(EnumType.STRING)
@@ -75,7 +87,6 @@ public class CustomerOrder {
                 "id=" + id +
                 ", serviceIds=" + serviceIds +
                 ", customerEmail='" + customerEmail + '\'' +
-                ", laundryEmail='" + laundryEmail + '\'' +
                 ", laundryName='" + laundryName + '\'' +
                 ", customerAddress='" + customerAddress + '\'' +
                 ", laundryAddress='" + laundryAddress + '\'' +
@@ -192,12 +203,11 @@ public class CustomerOrder {
         this.customerEmail = customerEmail;
     }
 
-    public String getLaundryEmail() {
-        return laundryEmail;
+    public Laundry getLaundry() {
+        return laundry;
     }
 
-    public void setLaundryEmail(String laundryEmail) {
-        this.laundryEmail = laundryEmail;
+    public void setLaundry(Laundry laundry) {
+        this.laundry = laundry;
     }
-
 }

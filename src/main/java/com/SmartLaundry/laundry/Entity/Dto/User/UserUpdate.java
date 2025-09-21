@@ -1,6 +1,8 @@
 package com.SmartLaundry.laundry.Entity.Dto.User;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,6 +15,11 @@ import lombok.Setter;
 public class UserUpdate {
     private String userName;
     private String otp;
+    @Size(min = 8, message = "Password must be at least 8 characters long")
+    @Pattern(
+            regexp = "^(?=.*[!@#$%^&*(),.?\":{}|<>]).+$",
+            message = "Password must contain at least one special character"
+    )
     private String password;
 
     public String getUserName() {

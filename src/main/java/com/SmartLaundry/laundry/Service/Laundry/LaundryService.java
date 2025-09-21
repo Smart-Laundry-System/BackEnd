@@ -42,10 +42,13 @@ package com.SmartLaundry.laundry.Service.Laundry;
 import com.SmartLaundry.laundry.Entity.Dto.Laundry.LaundryCreateRequest;
 import com.SmartLaundry.laundry.Entity.Laundry.Laundry;
 import com.SmartLaundry.laundry.Entity.Laundry.Services;
+import com.SmartLaundry.laundry.Entity.LaundryRating.LaundryRating;
 import com.SmartLaundry.laundry.Entity.Roles.UserRole;
 import com.SmartLaundry.laundry.Entity.User.User;
 import com.SmartLaundry.laundry.Repository.Laundry.LaundryRepository;
+import com.SmartLaundry.laundry.Repository.LaundryRating.LaundryRatingRepository;
 import com.SmartLaundry.laundry.Repository.User.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,9 +60,51 @@ public class LaundryService {
     private final LaundryRepository laundryRepository;
     private final UserRepository userRepository;
 
-    public LaundryService(LaundryRepository laundryRepository, UserRepository userRepository) {
+    private final LaundryRatingRepository ratingRepository;
+
+    public LaundryService(LaundryRepository laundryRepository, UserRepository userRepository, LaundryRatingRepository ratingRepository) {
         this.laundryRepository = laundryRepository;
         this.userRepository = userRepository;
+        this.ratingRepository = ratingRepository;
+    }
+
+    // LaundryService.java
+// LaundryService.java
+    @Transactional
+    public String addRating(Double rating, Long laundryId, String customerEmail) {
+        if (rating == null || rating < 0.0 || rating > 5.0)
+            throw new IllegalArgumentException("Rating must be between 0 and 5");
+        if (laundryId == null)
+            throw new IllegalArgumentException("laundryId is required");
+        if (customerEmail == null || customerEmail.isBlank())
+            throw new IllegalArgumentException("customerEmail is required");
+
+        Laundry laundry = laundryRepository.findById(laundryId)
+                .orElseThrow(() -> new EntityNotFoundException("Laundry not found: id=" + laundryId));
+
+        var existingOpt = ratingRepository.findByLaundryIdAndCustomerEmailIgnoreCase(laundryId, customerEmail);
+        boolean updated = existingOpt.isPresent();
+
+        LaundryRating lr = existingOpt.orElseGet(() -> {
+            LaundryRating n = new LaundryRating();
+            n.setLaundry(laundry);
+            n.setCustomerEmail(customerEmail);
+            return n;
+        });
+
+        lr.setValue(rating);
+        ratingRepository.save(lr); // updates if existing, inserts if new (unique key prevents duplicates)
+
+        // refresh aggregates
+        Double avg = ratingRepository.averageFor(laundryId);
+        long count = ratingRepository.countFor(laundryId);
+
+        laundry.setRating(avg == null ? 0.0 : avg);
+        laundry.setRatingCount(count);
+        laundryRepository.save(laundry);
+
+        return (updated ? "Updated" : "Created") +
+                String.format(" rating. avg=%.2f, count=%d", laundry.getRating(), laundry.getRatingCount());
     }
 
     @Transactional
@@ -87,6 +132,8 @@ public class LaundryService {
             l.setAddress(req.getAddress());
             l.setLaundryImg(req.getLaundryImg());
             l.setAbout(req.getAbout());
+            l.setOpenTime(req.getOpenTime());
+            l.setCloseTime(req.getCloseTime());
             l.setAvailableItems(req.getAvailableItems());
             l.setOtherItems(req.getOtherItems());
             l.setOwner(owner);
@@ -97,7 +144,7 @@ public class LaundryService {
                     Services s = new Services();
                     s.setId(null);
                     s.setTitle(sd.getTitle());
-                    s.setCategory(sd.getCategory());
+//                    s.setCategory(sd.getCategory());
                     s.setPrice(sd.getPrice());
                     l.addService(s); // ✅ sets s.laundry = l and adds to list
                 }

@@ -42,10 +42,10 @@ public class CustomerLinkService {
     }
 
     @Transactional
-    public String addCustomer(String customerEmail, String laundryOwnerEmail) {
+    public String addCustomer(String customerEmail, Long id) {
 
-        Laundry laundry = laundryRepository.findFirstByOwner_Email(laundryOwnerEmail)
-                .orElseThrow(() -> new IllegalArgumentException("Laundry(owner=" + laundryOwnerEmail + ") not found"));
+        Laundry laundry = laundryRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Laundry(owner=" + id + ") not found"));
 
         User user = userRepository.findByEmail(customerEmail)
                 .orElseThrow(() -> new IllegalArgumentException("User(email=" + customerEmail + ") not found"));

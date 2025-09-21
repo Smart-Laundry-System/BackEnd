@@ -16,13 +16,13 @@ public class UpdateCustomer {
 
     @Email
     @Column(nullable = false)
-    private String laundryEmail;
+    private Long laundryId;
 
     @Override
     public String toString() {
         return "UpdateCustomer{" +
                 "customerEmail='" + customerEmail + '\'' +
-                ", laundryEmail='" + laundryEmail + '\'' +
+                ", laundryEmail='" + laundryId + '\'' +
                 '}';
     }
 
@@ -34,11 +34,11 @@ public class UpdateCustomer {
         this.customerEmail = customerEmail;
     }
 
-    public String getLaundryEmail() {
-        return laundryEmail;
+    public Long getLaundryId() {
+        return laundryId;
     }
 
-    public void setLaundryEmail(String laundryEmail) {
-        this.laundryEmail = laundryEmail;
+    public void setLaundryId(Long laundryId) {
+        this.laundryId = laundryId;
     }
 }
