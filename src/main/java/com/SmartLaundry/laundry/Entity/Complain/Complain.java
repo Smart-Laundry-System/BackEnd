@@ -6,8 +6,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
-@Setter
-@Getter
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
@@ -20,10 +18,10 @@ public class Complain {
     private Long id;
 
     @Column(nullable = false)
-    private String laundry_email;
+    private String laundryEmail;
 
     @Column(nullable = false)
-    private String customer_email;
+    private String customerEmail;
 
     @Column(nullable = false)
     private String subject;
@@ -32,21 +30,21 @@ public class Complain {
     private String message;
 
     @Column(nullable = false)
-    private Long order_id;
+    private Long orderId;
 
     @Column(nullable = false)
-    private Long customer_id;
+    private Long customerId;
 
     @Override
     public String toString() {
         return "Complain{" +
                 "id=" + id +
-                ", laundry_email='" + laundry_email + '\'' +
-                ", customer_email='" + customer_email + '\'' +
+                ", laundry_email='" + laundryEmail + '\'' +
+                ", customer_email='" + customerEmail + '\'' +
                 ", subject='" + subject + '\'' +
                 ", message='" + message + '\'' +
-                ", order_id=" + order_id +
-                ", customer_id=" + customer_id +
+                ", order_id=" + orderId +
+                ", customer_id=" + customerId +
                 '}';
     }
 
@@ -54,5 +52,69 @@ public class Complain {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getLaundryEmail() {
+        return laundryEmail;
+    }
+
+    public void setLaundryEmail(String laundryEmail) {
+        this.laundryEmail = laundryEmail;
+    }
+
+    public String getCustomerEmail() {
+        return customerEmail;
+    }
+
+    public void setCustomerEmail(String customerEmail) {
+        this.customerEmail = customerEmail;
+    }
+
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Long getOrderId() {
+        return orderId;
+    }
+
+    public void setOrderId(Long orderId) {
+        this.orderId = orderId;
+    }
+
+    public Long getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(Long customerId) {
+        this.customerId = customerId;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
 }
 
